@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'person_type_id',
     ];
 
     /**
@@ -63,5 +64,49 @@ class User extends Authenticatable
         return $this->contracts
             ->filter(fn($c) => $c->property->id == $property_id)
             ->count();
+    }
+
+    public function personType()
+    {
+        return $this->belongsTo(PersonType::class);
+    }
+
+    public function moral()
+    {
+        return $this->hasOne(Moral::class);
+    }
+
+    public function national()
+    {
+        return $this->hasOne(National::class);
+    }
+
+    public function foreign()
+    {
+        return $this->hasOne(Foreign::class);
+    }
+
+    public function setPersonTypeData($personTypeId, $request)
+    {
+        switch ($personTypeId) {
+            case 1:
+                $this->moral()->create(['rfc' => $request->rfc]);
+                break;
+            case 2:
+                $this->national()->create([
+                    'rfc' => $request->rfc,
+                    'curp' => $request->curp
+                ]);
+                break;
+            case 3:
+                $this->foreign()->create([
+                    'nue' => $request->nue,
+                    'curp' => $request->curp
+                ]);
+                break;
+            default:
+                # code...
+                break;
+        }
     }
 }
