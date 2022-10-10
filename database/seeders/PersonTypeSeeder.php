@@ -15,23 +15,18 @@ class PersonTypeSeeder extends Seeder
     public function run()
     {
         PersonType::create([
-            'name' => 'Persona Moral',
-            'code' => 'PM'
+            'name' => 'pm',
+            'document' => 'rfc'
         ]);
         
         PersonType::create([
-            'name' => 'Persona Física Nacional',
-            'code' => 'PFN'
+            'name' => 'pfn',
+            'document' => 'curp'
         ]);
         
         PersonType::create([
-            'name' => 'Persona Física Extranjera',
-            'code' => 'PFE'
-        ]);
-        
-        PersonType::create([
-            'name' => 'Persona Otra',
-            'code' => 'PO'
+            'name' => 'pfe',
+            'document' => 'nue'
         ]);
     }
 }

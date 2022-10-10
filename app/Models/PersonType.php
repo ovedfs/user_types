@@ -11,7 +11,7 @@ class PersonType extends Model
 
     protected $fillable = [
         'name',
-        'code',
+        'document',
     ];
     
     public function users()

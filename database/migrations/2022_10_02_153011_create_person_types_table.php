@@ -16,7 +16,7 @@ class CreatePersonTypesTable extends Migration
         Schema::create('person_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code');
+            $table->string('document');
             $table->timestamps();
         });
     }

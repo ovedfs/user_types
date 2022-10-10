@@ -18,22 +18,9 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
-            'person_type_id' => 'required|integer'
+            'person_type_id' => 'required|unique_with:users,document_value',
+            'document_value' => 'required',
         ];
-    
-        if($request->person_type_id == 1) {
-            $rules["rfc"] ="required";
-        } else if($request->person_type_id == 2) {
-            $rules["rfc"] ="sometimes";
-            $rules["curp"] ="required";
-        } else if($request->person_type_id == 3) {
-            $rules["nue"] ="required";
-            $rules["curp"] ="sometimes";
-        } else {
-            return response()->json([
-                'message' => 'Error al registrar al usuario, tipo de persona no valido',
-            ]);
-        }
     
         $validator = Validator::make($request->all(), $rules);
     
@@ -51,18 +38,17 @@ class AuthController extends Controller
         $user->email_verified_at = now();
         $user->remember_token = Str::random(10);
         $user->person_type_id = $request->person_type_id;
+        $user->document_value = $request->document_value;
     
         if($user->save()) {
             $token = $user->createToken('auth_token')->plainTextToken;
-    
-            $user->setPersonTypeData($request->person_type_id, $request);
     
             $role = $request->person_type_id == 3 ? 'arrendatario' : 'arrendador';
             $user->assignRole($role);
     
             return response()->json([
                 'message' => 'Usuario registrado correctamente',
-                'user' => $user->load('moral', 'national', 'foreign'),
+                'user' => $user->load('personType'),
                 'token' => $token
             ]);
         }
@@ -94,11 +80,9 @@ class AuthController extends Controller
 
     public function profile()
     {
-        $personType = auth()->user()->moral ? 'moral' : 
-                    (auth()->user()->national ? 'national' : 'foreign');
         return response()->json([
             'message' => 'Perfil del usuario',
-            'user' => auth()->user()->load($personType),
+            'user' => auth()->user()->load('personType'),
             'roles' => auth()->user()->getRoleNames()
         ]);
     }

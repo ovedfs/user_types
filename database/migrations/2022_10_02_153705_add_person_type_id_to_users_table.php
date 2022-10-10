@@ -19,6 +19,10 @@ class AddPersonTypeIdToUsersTable extends Migration
                 ->references('id')
                 ->on('person_types')
                 ->onDelete('cascade');
+
+            $table->string('document_value');
+
+            $table->unique(['person_type_id', 'document_value']);
         });
     }
 
@@ -31,6 +35,7 @@ class AddPersonTypeIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('person_type_id');
+            $table->dropColumn('document_value');
         });
     }
 }
